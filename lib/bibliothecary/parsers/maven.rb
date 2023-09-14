@@ -34,6 +34,7 @@ module Bibliothecary
       GRADLE_GAV_REGEX = /([\w.-]+)\:([\w.-]+)(?:\:(#{GRADLE_VERSION_REGEX}|#{GRADLE_VAR_INTERPOLATION_REGEX}|#{GRADLE_CODE_INTERPOLATION_REGEX}))?/ # e.g. "group:artifactId:1.2.3"
       GRADLE_GROOVY_SIMPLE_REGEX = /(#{GRADLE_DEPENDENCY_METHODS.join('|')})\s*\(?\s*['"]#{GRADLE_GAV_REGEX}['"]/m 
       GRADLE_KOTLIN_SIMPLE_REGEX = /(#{GRADLE_DEPENDENCY_METHODS.join('|')})\s*\(\s*"#{GRADLE_GAV_REGEX}"/m 
+      GRADLE_KOTLIN_CUSTOM_REGEX = /implementation\(group = "(.*?)".*?(?:version = "(.*?)".*?)?\)/
 
       MAVEN_PROPERTY_REGEX = /\$\{(.+?)\}/
       MAX_DEPTH = 5
@@ -296,16 +297,24 @@ module Bibliothecary
       end
 
       def self.parse_gradle_kts(file_contents, options: {})
-        file_contents
-          .scan(GRADLE_KOTLIN_SIMPLE_REGEX)                                                # match 'implementation("group:artifactId:version")'
-          .reject { |(_type, group, artifactId, _version)| group.nil? || artifactId.nil? } # remove any matches with missing group/artifactId
-          .map { |(type, group, artifactId, version)|
-            {
-              name: [group, artifactId].join(":"),
-              requirement: version || "*",
-              type: type
-            }
-          }
+        bibliothecary_list =
+          file_contents
+            .scan(GRADLE_KOTLIN_SIMPLE_REGEX) # match 'implementation("group:artifactId:version")'
+            .reject do |(_type, group, artifactId, _version)|
+              group.nil? || artifactId.nil?
+            end
+            .map do |(type, group, artifactId, version)|
+              { name: [group, artifactId].join(':'), requirement: version || '*', type: type }
+            end
+
+        custom_list_for_allegro =
+          file_contents
+            .scan(GRADLE_KOTLIN_CUSTOM_REGEX)
+            .map do |(name, version)|
+              { name: name, requirement: version || '*', type: 'implementation' }
+            end
+            
+        bibliothecary_list + custom_list_for_allegro
       end
 
       def self.gradle_dependency_name(group, name)

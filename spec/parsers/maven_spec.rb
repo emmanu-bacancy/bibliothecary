@@ -229,7 +229,8 @@ RSpec.describe Bibliothecary::Parsers::Maven do
           { name: "com.google.guava:guava", requirement: "30.1.1-jre", type: "implementation" },
           { name: "org.jetbrains.kotlin:kotlin-test", requirement: "*", type: "testImplementation" },
           { name: "org.jetbrains.kotlin:kotlin-test-junit", requirement: "1.0.0", type: "testImplementation" },
-          { name: "androidx.annotation:annotation", requirement: "${rootProject.extra[\"androidx_annotation_version\"]}", type: "implementation" }
+          { name: "androidx.annotation:annotation", requirement: "${rootProject.extra[\"androidx_annotation_version\"]}", type: "implementation" },
+          { name: "pl.allegro.bigdata.hadoop", requirement: "0.3.0", type: "implementation"}
         ],
         kind: 'manifest',
         success: true

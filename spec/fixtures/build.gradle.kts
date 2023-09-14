@@ -22,6 +22,7 @@ repositories {
 dependencies {
     // Align versions of all Kotlin components
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+    implementation(group = "pl.allegro.bigdata.hadoop", name = "vault-gcp-java", version = "0.3.0")
 
     // Use the Kotlin JDK 8 standard library.
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
