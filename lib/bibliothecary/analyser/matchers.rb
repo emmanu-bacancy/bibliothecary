@@ -29,6 +29,11 @@ module Bibliothecary
       end
 
       def mapping_entry_match?(matcher, details, info)
+        puts "========"
+        puts matcher
+        puts details
+        puts info
+        puts "+++++++"
         if matcher.call(info.relative_path)
           # we only want to load contents if we don't have them already
           # and there's a content_matcher method to use
