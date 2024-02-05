@@ -5,7 +5,11 @@ module Bibliothecary
         if case_insensitive
           lambda { |path| path.downcase == filename.downcase || path.downcase.end_with?("/" + filename.downcase) }
         else
-          lambda { |path| path == filename || path.end_with?("/" + filename) }
+          lambda do |path|
+            puts "Path is #{path}"
+            puts "File name is #{filename}"
+            path == filename || path.end_with?("/" + filename)
+          end
         end
       end
 
